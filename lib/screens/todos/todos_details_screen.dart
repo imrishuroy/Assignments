@@ -6,9 +6,12 @@ import 'package:assignments/screens/todos/add_todo_switch.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 
 import 'package:intl/intl.dart';
 import 'dart:core';
+
+import 'package:url_launcher/url_launcher.dart';
 
 class TodoDetailsScreen extends StatelessWidget {
   final String? todoId;
@@ -17,9 +20,9 @@ class TodoDetailsScreen extends StatelessWidget {
   TodoDetailsScreen({Key? key, @required this.todoId, @required this.userId})
       : super(key: key);
 
-  // Future<void> _onOpen(LinkableElement link) async {
-  //   await launch(link.url);
-  // }
+  Future<void> _onOpen(LinkableElement link) async {
+    await launch(link.url);
+  }
 
   final DateFormat format = DateFormat('dd MMM yy  hh:mm a');
 
@@ -97,17 +100,13 @@ class TodoDetailsScreen extends StatelessWidget {
                               style: const TextStyle(fontSize: 20),
                             ),
                           ),
-                          Text(
-                            '${todo.todo}',
+                          SelectableLinkify(
+                            onOpen: _onOpen,
+                            options: LinkifyOptions(humanize: false),
+                            text: todo.todo,
                             style: Theme.of(context).textTheme.subtitle1,
+                            linkStyle: TextStyle(color: Colors.blue),
                           ),
-                          // SelectableLinkify(
-                          //   onOpen: _onOpen,
-                          //   options: LinkifyOptions(humanize: false),
-                          //   text: todo.todo,
-                          //   style: Theme.of(context).textTheme.subtitle1,
-                          //   linkStyle: TextStyle(color: Colors.blue),
-                          // ),
                         ],
                       ),
                     ),

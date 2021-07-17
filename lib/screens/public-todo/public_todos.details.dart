@@ -7,17 +7,20 @@ import 'package:assignments/widgets/loading_indicator.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:intl/intl.dart';
 import 'dart:core';
+
+import 'package:url_launcher/url_launcher.dart';
 
 class PublicTodoDetailsScreen extends StatelessWidget {
   final String? id;
 
   PublicTodoDetailsScreen({Key? key, @required this.id}) : super(key: key);
 
-  // Future<void> _onOpen(LinkableElement link) async {
-  //   await launch(link.url);
-  // }
+  Future<void> _onOpen(LinkableElement link) async {
+    await launch(link.url);
+  }
 
   final DateFormat format = DateFormat('dd MMM yy  hh:mm a');
 
@@ -82,17 +85,13 @@ class PublicTodoDetailsScreen extends StatelessWidget {
                                   style: TextStyle(fontSize: 20),
                                 ),
                               ),
-                              Text(
-                                '${todo.todo}',
+                              SelectableLinkify(
+                                onOpen: _onOpen,
+                                options: LinkifyOptions(humanize: false),
+                                text: todo.todo!,
                                 style: Theme.of(context).textTheme.subtitle1,
-                              )
-                              // SelectableLinkify(
-                              //   onOpen: _onOpen,
-                              //   options: LinkifyOptions(humanize: false),
-                              //   text: todo.todo!,
-                              //   style: Theme.of(context).textTheme.subtitle1,
-                              //   linkStyle: TextStyle(color: Colors.blue),
-                              // ),
+                                linkStyle: TextStyle(color: Colors.blue),
+                              ),
                             ],
                           ),
                         ),
@@ -138,6 +137,3 @@ class PublicTodoDetailsScreen extends StatelessWidget {
     );
   }
 }
-
-// 2021-06-12 18:15:40.444249
-// 2021-06-12 18:15:40.444

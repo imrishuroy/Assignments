@@ -1,17 +1,17 @@
-// part of 'theme_bloc.dart';
+part of 'theme_bloc.dart';
 
-// class ThemeState extends Equatable {
-//   final ThemeData? themeData;
+class ThemeState extends Equatable {
+  final ThemeData? themeData;
 
-//   const ThemeState(this.themeData);
+  const ThemeState(this.themeData);
 
-//   factory ThemeState.initial() {
-//     return ThemeState(appThemeData[AppTheme.Light]);
-//   }
+  factory ThemeState.initial() {
+    return ThemeState(appThemeData[AppTheme.Light]);
+  }
 
-//   @override
-//   bool? get stringify => super.stringify;
+  @override
+  bool? get stringify => super.stringify;
 
-//   @override
-//   List<Object?> get props => [themeData];
-// }
+  @override
+  List<Object?> get props => [themeData];
+}

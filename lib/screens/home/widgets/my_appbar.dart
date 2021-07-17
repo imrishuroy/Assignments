@@ -1,4 +1,5 @@
 import 'package:assignments/models/app_tab_bar.dart';
+import 'package:assignments/screens/home/change_theme.dart';
 import 'package:assignments/widgets/extra_actions.dart';
 import 'package:assignments/widgets/filter_button.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +26,7 @@ class MyAppBar extends StatelessWidget {
         automaticallyImplyLeading: false,
         title: Text('Your Profile'),
         actions: [
-          //ChangeTheme(),
+          ChangeTheme(),
           const SizedBox(width: 10.0),
         ],
       );

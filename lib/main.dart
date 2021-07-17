@@ -5,9 +5,11 @@ import 'package:assignments/blocs/public-todo/publictodo_bloc.dart';
 import 'package:assignments/blocs/simple_bloc_oberver.dart';
 import 'package:assignments/blocs/stats/stats_bloc.dart';
 import 'package:assignments/blocs/tab/tab_bloc.dart';
+import 'package:assignments/blocs/theme/theme_bloc.dart';
 import 'package:assignments/blocs/todo/todo_bloc.dart';
 import 'package:assignments/config/auth_wrapper.dart';
 import 'package:assignments/config/custom_router.dart';
+import 'package:assignments/config/shared_prefs.dart';
 import 'package:assignments/repositories/auth/auth_repository.dart';
 import 'package:assignments/repositories/profile/profile_repository.dart';
 import 'package:assignments/repositories/public-todos/public_todos_repository.dart';
@@ -15,6 +17,7 @@ import 'package:assignments/repositories/services/firebase_service.dart';
 import 'package:assignments/repositories/todo/todo_repository.dart';
 import 'package:assignments/repositories/utils/util_repository.dart';
 import 'package:assignments/services/notification_services.dart';
+import 'package:assignments/theme/app_theme.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -27,7 +30,7 @@ Future<void> main() async {
   await Firebase.initializeApp();
   Bloc.observer = SimpleBlocObserver();
   EquatableConfig.stringify = kDebugMode;
-
+  await SharedPrefs().init();
   runApp(MyApp());
 }
 
@@ -61,9 +64,9 @@ class MyApp extends StatelessWidget {
       ],
       child: MultiBlocProvider(
         providers: [
-          // BlocProvider<ThemeBloc>(
-          //   create: (context) => ThemeBloc(),
-          // ),
+          BlocProvider<ThemeBloc>(
+            create: (context) => ThemeBloc(),
+          ),
           BlocProvider<AuthBloc>(
             create: (context) => AuthBloc(
               authRepository: context.read<AuthRepository>(),
@@ -100,16 +103,17 @@ class MyApp extends StatelessWidget {
             )..add(LoadProfile()),
           )
         ],
-        child: MaterialApp(
-          debugShowCheckedModeBanner: false,
-          theme: ThemeData(
-            primaryColor: Colors.green,
-            visualDensity: VisualDensity.adaptivePlatformDensity,
-            brightness: Brightness.dark,
-          ),
-          title: '+Assignments',
-          onGenerateRoute: CustomRouter.onGenerateRoute,
-          initialRoute: AuthWrapper.routeName,
+        child: BlocBuilder<ThemeBloc, ThemeState>(
+          builder: (context, state) {
+            return MaterialApp(
+              debugShowCheckedModeBanner: false,
+              title: '+Assignments',
+              theme:
+                  appThemeData[AppTheme.values.elementAt(SharedPrefs().theme)],
+              onGenerateRoute: CustomRouter.onGenerateRoute,
+              initialRoute: AuthWrapper.routeName,
+            );
+          },
         ),
       ),
     );
