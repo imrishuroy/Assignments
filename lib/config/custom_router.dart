@@ -1,6 +1,8 @@
 import 'package:assignments/config/auth_wrapper.dart';
+import 'package:assignments/screens/contact/contact_us.dart';
 import 'package:assignments/screens/home/home_screen.dart';
 import 'package:assignments/screens/login/login_screen.dart';
+import 'package:assignments/screens/privacy/privacy_policy.dart';
 import 'package:assignments/screens/public-todo/add_edit_public_todos.dart';
 import 'package:assignments/screens/todos/add_edit_todo_screen.dart';
 import 'package:flutter/material.dart';
@@ -29,6 +31,11 @@ class CustomRouter {
       case AddEditPublicTodoScreen.routeName:
         return AddEditPublicTodoScreen.route();
 
+      case PrivicyPolicy.routeName:
+        return PrivicyPolicy.route();
+
+      case ContactUs.routeName:
+        return ContactUs.route();
       default:
         return _errorRoute();
     }

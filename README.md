@@ -66,3 +66,8 @@ Lost connection to device.
             android:value="2" />
     </application>
 </manifest> -->
+
+
+945647164575-echf9vi9q6ib2bmr9d253ihiv4ov587t.apps.googleusercontent.com - client id
+
+9zgDUjlW608mrwDZNnGLVlYh - client secret

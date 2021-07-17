@@ -2,20 +2,10 @@ import 'package:assignments/config/paths.dart';
 import 'package:assignments/models/failure_model.dart';
 import 'package:assignments/models/public_todos.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class PublicTodosRepository {
   final CollectionReference _publicTodos =
       FirebaseFirestore.instance.collection(Paths.public);
-
-  final String _currentUserId = FirebaseAuth.instance.currentUser!.uid;
-
-//  Stream<List todos()  {
-//     final usersRef = await publicTodos.get();
-//     usersRef.docs.forEach((element) {
-//       element.data();
-//     });
-//   }
 
   Stream<List<PublicTodo>> allTodos() {
     try {
@@ -38,7 +28,6 @@ class PublicTodosRepository {
     bool _exists = false;
     try {
       final todo = await _publicTodos.doc(publicTodoId).get();
-      print('----todo $todo');
       if (todo.exists) {
         print('this exists ');
         _exists = true;
@@ -60,9 +49,10 @@ class PublicTodosRepository {
     }
   }
 
-  Future<void> deleteTodo(PublicTodo todoToDelete) async {
+  Future<void> deleteTodo(
+      PublicTodo todoToDelete, String? currentUserId) async {
     try {
-      if (todoToDelete.authorId == _currentUserId) {
+      if (todoToDelete.authorId == currentUserId) {
         await _publicTodos.doc(todoToDelete.todoId).delete();
       }
     } catch (error) {
@@ -80,9 +70,10 @@ class PublicTodosRepository {
     }
   }
 
-  Future<void> updatePublicTodo(PublicTodo todoToUpdate) async {
+  Future<void> updatePublicTodo(
+      PublicTodo todoToUpdate, String? currentUserId) async {
     try {
-      if (todoToUpdate.authorId == _currentUserId) {
+      if (todoToUpdate.authorId == currentUserId) {
         await _publicTodos
             .doc(todoToUpdate.todoId)
             .update(todoToUpdate.toMap());

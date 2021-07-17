@@ -7,6 +7,7 @@ import 'package:assignments/widgets/deleted_todo_snackbar.dart';
 import 'package:assignments/widgets/loading_indicator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 
 class PublicTodos extends StatelessWidget {
   PublicTodos({Key? key}) : super(key: key);
@@ -37,27 +38,38 @@ class PublicTodos extends StatelessWidget {
                     itemCount: todos.length,
                     itemBuilder: (context, index) {
                       final PublicTodo publicTodo = todos[index];
-                      return PublicTodoItem(
-                        todo: publicTodo,
-                        onTap: () async {
-                          final removedTodo = await Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => PublicTodoDetailsScreen(
-                                id: publicTodo.todoId,
-                              ),
+                      return AnimationConfiguration.staggeredList(
+                        position: index,
+                        duration: const Duration(milliseconds: 375),
+                        child: SlideAnimation(
+                          verticalOffset: 50.0,
+                          child: FadeInAnimation(
+                            child: PublicTodoItem(
+                              todo: publicTodo,
+                              onTap: () async {
+                                final removedTodo =
+                                    await Navigator.of(context).push(
+                                  MaterialPageRoute(
+                                    builder: (_) => PublicTodoDetailsScreen(
+                                      id: publicTodo.todoId,
+                                    ),
+                                  ),
+                                );
+                                if (removedTodo != null) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    DeleteTodoSnackBar(
+                                      title: publicTodo.title,
+                                      onUndo: () =>
+                                          BlocProvider.of<PublictodoBloc>(
+                                                  context)
+                                              .add(AddPublicTodo(publicTodo)),
+                                    ),
+                                  );
+                                }
+                              },
                             ),
-                          );
-                          if (removedTodo != null) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              DeleteTodoSnackBar(
-                                title: publicTodo.title,
-                                onUndo: () =>
-                                    BlocProvider.of<PublictodoBloc>(context)
-                                        .add(AddPublicTodo(publicTodo)),
-                              ),
-                            );
-                          }
-                        },
+                          ),
+                        ),
                       );
                     },
                   );
