@@ -10,7 +10,10 @@ class ShowSnackBar {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         backgroundColor: backgroundColor,
-        content: Text('$title'),
+        content: Text(
+          '$title',
+          style: TextStyle(color: Colors.white),
+        ),
         action: SnackBarAction(
           label: 'OK',
           textColor: Colors.white,

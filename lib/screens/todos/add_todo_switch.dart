@@ -30,7 +30,9 @@ class _AddTodoSwitchState extends State<AddTodoSwitch> {
         builder: (context) {
           return AlertDialog(
             title: Text('Remove'),
-            content: Text('Do you want to remove this public todo ?'),
+            content: Text(
+              'Do you want to remove this public todo ?',
+            ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
@@ -57,7 +59,8 @@ class _AddTodoSwitchState extends State<AddTodoSwitch> {
         setState(() {
           _value = false;
         });
-        ShowSnackBar.showSnackBar(context, title: 'Removed from public');
+        ShowSnackBar.showSnackBar(context,
+            title: 'Removed from public', backgroundColor: Colors.green);
       }
     } catch (error) {
       print(error.toString());
