@@ -7,6 +7,7 @@ import 'package:assignments/screens/todos/add_edit_todo_screen.dart';
 import 'package:assignments/services/notification_services.dart';
 import 'package:assignments/widgets/loading_indicator.dart';
 import 'package:assignments/widgets/tab_selector.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -52,6 +53,56 @@ class _HomeScreenState extends State<HomeScreen> {
       tz.initializeTimeZones();
       RepositoryProvider.of<NotificationService>(context)
           .initialiseSettings(onSelectNotification);
+
+      _notificationSetup();
+    }
+  }
+
+  _notificationSetup() {
+    try {
+      ///gives you the message on which user taps
+      ///and it opened the app from terminated state
+      FirebaseMessaging.instance.getInitialMessage().then((message) {
+        if (message != null) {
+          print('getInitialMessage runs ${message.data}');
+          final routeFromMessage = message.data["route"];
+          print('Notification Route $routeFromMessage');
+
+          Navigator.of(context).pushNamed(routeFromMessage);
+        }
+      });
+
+      ///forground work
+      FirebaseMessaging.onMessage.listen((message) {
+        if (message.notification != null) {
+          print('onMessage runs ${message.data}');
+          print(message.notification!.body);
+          print(message.notification!.title);
+        }
+
+        final notification =
+            RepositoryProvider.of<NotificationService>(context, listen: false);
+        notification.showNotification();
+
+        // final routeFromMessage = message.data["route"];
+        // print('Notification Route $routeFromMessage');
+
+        //Navigator.of(context).pushNamed(routeFromMessage);
+        // LocalNotificationService.display(message);
+      });
+
+      ///When the app is in background but opened and user taps
+      ///on the notification
+      FirebaseMessaging.onMessageOpenedApp.listen((message) {
+        print('onMessageOpenedApp runs ${message.data}');
+
+        final routeFromMessage = message.data["route"];
+        print('Notification Route $routeFromMessage');
+
+        Navigator.of(context).pushNamed(routeFromMessage);
+      });
+    } catch (error) {
+      print(error.toString());
     }
   }
 
