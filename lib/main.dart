@@ -28,6 +28,8 @@ import 'package:universal_platform/universal_platform.dart';
 
 ///Receive message when app is in background solution for on message
 Future<void> _backgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  await FirebaseMessaging.instance.requestPermission();
   print(message.data.toString());
   print(message.notification!.title);
 }

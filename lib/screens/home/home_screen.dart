@@ -55,52 +55,82 @@ class _HomeScreenState extends State<HomeScreen> {
           .initialiseSettings(onSelectNotification);
 
       _notificationSetup();
+      //  _triggerAppMessaging();
     }
   }
+  // just testing in app messaging
+  // _triggerAppMessaging() async {
+  //   await FirebaseInAppMessaging.instance.triggerEvent('purchase');
+  // }
 
-  _notificationSetup() {
+  _notificationSetup() async {
     try {
-      ///gives you the message on which user taps
-      ///and it opened the app from terminated state
-      FirebaseMessaging.instance.getInitialMessage().then((message) {
-        if (message != null) {
-          print('getInitialMessage runs ${message.data}');
-          final routeFromMessage = message.data["route"];
-          print('Notification Route $routeFromMessage');
+      // asking for permissions
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
 
-          Navigator.of(context).pushNamed(routeFromMessage);
-        }
-      });
+      NotificationSettings settings = await messaging.requestPermission(
+        alert: true,
+        announcement: false,
+        badge: true,
+        carPlay: false,
+        criticalAlert: false,
+        provisional: false,
+        sound: true,
+      );
 
-      ///forground work
-      FirebaseMessaging.onMessage.listen((message) {
-        if (message.notification != null) {
-          print('onMessage runs ${message.data}');
-          print(message.notification!.body);
-          print(message.notification!.title);
-        }
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        print('User granted permission');
 
-        final notification =
-            RepositoryProvider.of<NotificationService>(context, listen: false);
-        notification.showNotification();
+        ///gives you the message on which user taps
+        ///and it opened the app from terminated state
+        ///me
+        await messaging.getAPNSToken();
+        FirebaseMessaging.instance.getInitialMessage().then((message) {
+          if (message != null) {
+            // print('getInitialMessage runs ${message.data}');
+            // final routeFromMessage = message.data["route"];
+            // print('Notification Route $routeFromMessage');
 
-        // final routeFromMessage = message.data["route"];
-        // print('Notification Route $routeFromMessage');
+            // Navigator.of(context).pushNamed(routeFromMessage);
+          }
+        });
 
-        //Navigator.of(context).pushNamed(routeFromMessage);
-        // LocalNotificationService.display(message);
-      });
+        ///forground work
+        FirebaseMessaging.onMessage.listen((message) {
+          if (message.notification != null) {
+            print('onMessage runs ${message.data}');
+            print(message.notification!.body);
+            print(message.notification!.title);
+          }
 
-      ///When the app is in background but opened and user taps
-      ///on the notification
-      FirebaseMessaging.onMessageOpenedApp.listen((message) {
-        print('onMessageOpenedApp runs ${message.data}');
+          final notification = RepositoryProvider.of<NotificationService>(
+              context,
+              listen: false);
+          notification.showNotification();
 
-        final routeFromMessage = message.data["route"];
-        print('Notification Route $routeFromMessage');
+          // final routeFromMessage = message.data["route"];
+          // print('Notification Route $routeFromMessage');
 
-        Navigator.of(context).pushNamed(routeFromMessage);
-      });
+          //Navigator.of(context).pushNamed(routeFromMessage);
+          // LocalNotificationService.display(message);
+        });
+
+        ///When the app is in background but opened and user taps
+        ///on the notification
+        FirebaseMessaging.onMessageOpenedApp.listen((message) {
+          // print('onMessageOpenedApp runs ${message.data}');
+
+          // final routeFromMessage = message.data["route"];
+          // print('Notification Route $routeFromMessage');
+
+          // Navigator.of(context).pushNamed(routeFromMessage);
+        });
+      } else if (settings.authorizationStatus ==
+          AuthorizationStatus.provisional) {
+        print('User granted provisional permission');
+      } else {
+        print('User declined or has not accepted permission');
+      }
     } catch (error) {
       print(error.toString());
     }
@@ -220,3 +250,5 @@ class _HomeScreenState extends State<HomeScreen> {
 // 2021-07-17T08:25:32_84840
 
 // gcloud firestore import gs://assignments_bucket_transfered/2021-07-17T08:25:32_84840 --async
+
+// #Raj2024
